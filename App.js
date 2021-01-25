@@ -34,11 +34,11 @@ export default class App extends Component {
 
   componentDidMount() {
     fetch('https://jsonplaceholder.typicode.com/posts')
-      .then((response) => response.json())
-      .then((json) => {
+      .then(response => response.json())
+      .then(json => {
         this.setState({ data: json });
       })
-      .catch((error) => console.error(`Oops! ... something went wrong`))
+      .catch(error => console.error(`Oops! ... something went wrong`))
       .finally(() => {
         this.setState({ isLoading: false });
       });
@@ -49,15 +49,13 @@ export default class App extends Component {
   }
 
   renderItem({ item }) {
-    const { data } = this.state;
-
-      return (
-        <View style={styles.content}>
-          <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.body}>{item.body}</Text>
-        </View>
-      );
-    }
+    return (
+      <View style={styles.content}>
+        <Text style={styles.title}>{item.title}</Text>
+        <Text style={styles.body}>{item.body}</Text>
+      </View>
+    );
+  }
 
   render() {
     const { data, isLoading } = this.state;
