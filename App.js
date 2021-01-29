@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { ActivityIndicator, FlatList, Text, View, StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -19,32 +19,26 @@ const styles = StyleSheet.create({
   }
 });
 
-export default class App extends Component {
-  constructor(props) {
-    super(props);
+export default function App {
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-    this.state = {
-      data: [],
-      isLoading: true
-    };
+  useEffect(() => {
+    fetchData()
+  })
 
-    this.keyExtractor = this.keyExtractor.bind(this);
-    this.renderItem = this.renderItem.bind(this);
-  }
+  const fetchData = useMemo(() => async () => {
+    try {
+      const response = await fetch('https://jsonplaceholder.typicode.com/posts').json()
+      setData(response)
+    } catch(e) {
+      console.error(`Oops! ... something went wrong`, e)
+    } finally {
+      setIsLoading(false)
+    }
+  })
 
-  componentDidMount() {
-    fetch('https://jsonplaceholder.typicode.com/posts')
-      .then(response => response.json())
-      .then(json => {
-        this.setState({ data: json });
-      })
-      .catch(error => console.error(`Oops! ... something went wrong`))
-      .finally(() => {
-        this.setState({ isLoading: false });
-      });
-  }
-
-  keyExtractor(item) {
+  const keyExtractor = item => {
     return item.id;
   }
 
@@ -57,19 +51,15 @@ export default class App extends Component {
     );
   }
 
-  render() {
-    const { data, isLoading } = this.state;
-
-    return (
-        <View style={styles.container}>
-          {isLoading ? <ActivityIndicator/> : (
-            <FlatList
-              data={data}
-              renderItem={this.renderItem}
-              keyExtractor={this.keyExtractor}
-            />
-          )}
-        </View>
-    );
-  }
+  return (
+      <View style={styles.container}>
+        {isLoading ? <ActivityIndicator/> : (
+          <FlatList
+            data={data}
+            renderItem={this.renderItem}
+            keyExtractor={this.keyExtractor}
+          />
+        )}
+      </View>
+  );
 }
